@@ -75,7 +75,7 @@ private:
 };
 
 /**
- * A class that implements an operation that can be registered in `ComputePipeline`.
+ * A base class for operation implementations that can be registered in `ComputePipeline`.
  */
 class Operation {
 public:
@@ -96,7 +96,7 @@ public:
 };
 
 /**
- * A struct that defines a data type that can be an input or output of `Operation::Execute()`.
+ * A base for a data type that can be an input or output of `Operation::Execute()`.
  */
 struct DataType {
     /**
