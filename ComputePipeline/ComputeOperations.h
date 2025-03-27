@@ -5,8 +5,6 @@
 #include <cstddef>
 #include <vector>
 
-extern bool gNetworkErrorInjection;
-
 struct TextDataType: public DataType {
     std::string text;
     
@@ -43,6 +41,7 @@ struct RawImageDataType: public DataType {
     constexpr static std::string_view Type = "type/raw_image";
 };
 
+/** Dummy JSON object */
 struct JsonData {
     JsonData() = default;
     JsonData(const JsonData&) = default;

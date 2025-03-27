@@ -32,6 +32,7 @@ OperationResult ComputePipeline::Execute(std::unique_ptr<DataType> input) {
             result.lastResult = std::move(previousResult.data);
             return result;
         }
+        
         result.executedOperations = std::move(previousResult.executedOperations);
         result.executedOperations.push_back(std::string(operation->GetName()));
         previousResult = std::move(result);

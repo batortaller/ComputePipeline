@@ -3,35 +3,34 @@
 #include <cassert>
 #include <iostream>
 
-bool gNetworkErrorInjection = false;
-
 OperationResult LoadOperation::Execute(const OperationResult& input) const {
     std::cout << "LoadOperation::Execute\n";
     auto* data = static_cast<InputDataType*>(input.data.get());
     if (data->uri.starts_with("http://")) {
-        // http request
-        if (gNetworkErrorInjection) {
+        // http request ...
+        const bool success = true;
+        if (!success) {
             return OperationError{.type = OperationError::Type::NetworkError,
                                   .description = "Injected error"};
         }
         
         auto rawJson = "{ 'objectType': 'ImageMeta', 'format': 'jpeg'}";
         return std::unique_ptr<DataType>(new TextDataType(std::move(rawJson)));
-        //return data;
     } else if (data->uri.starts_with("https://")) {
-        // http request
-        if (gNetworkErrorInjection) {
+        // http request ...
+        const bool success = true;
+        if (!success) {
             return OperationError{.type = OperationError::Type::NetworkError,
                                   .description = "Injected error"};
         }
         return std::unique_ptr<DataType>(new TextDataType("Hello World!"));
     } else if (data->uri.starts_with("file://")) {
-        // file load
+        // file load ...
         return std::unique_ptr<DataType>(new CompressedDataType({std::byte{0xFF},
                                                                  std::byte{0xAA},
                                                                  std::byte{0x11}}));
     } else if (data->uri.starts_with("bundle://")) {
-        // load from bundle
+        // load from bundle ...
         return std::unique_ptr<DataType>(new RawImageDataType({std::byte{0x00},
                                                                std::byte{0x11},
                                                                std::byte{0x22}}));

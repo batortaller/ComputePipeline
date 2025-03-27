@@ -32,7 +32,6 @@ if (!jsonResult.error && jsonResult.data->GetType() == UserDataType::Type) {
 
 ### Defining Custom Operations
 ```cpp
-
 struct UserDataType: public DataType {
     std::string userId;
     std::string name;
@@ -60,38 +59,30 @@ class UserDataDeserializationOperation: public Operation {
 
 ## Architecture
 
-The ComputePipeline is built around several key components that work together to create a flexible and type-safe data processing pipeline:
-
-### Core Components
-
 1. **ComputePipeline**
-   - Central orchestrator that manages operation registration and execution
-   - Maintains a registry of operations mapped to their input types
-   - Automatically chains operations based on input/output data types
-   - Handles operation execution and error propagation
+  - Central orchestrator that manages operation registration and execution
+  - Key methods:
+    - `bool RegisterOperation(std::unique_ptr<Operation> op)`
+      - registers an operation
+    - `OperationResult Execute(URIDataType input)`
+      - starts the pipeline with a URI that can be `http://`, `https://`, `file://` or `bundle://`
 
 2. **Operation**
-   - Abstract base class for all pipeline operations
-   - Key methods:
-     - `GetInputType()`: Declares the type of data the operation can process
-     - `GetName()`: Provides operation identification
-     - `Execute()`: Implements the operation's processing logic
+  - Abstract base class for all pipeline operations
+  - Key methods:
+     - `std::string_view GetInputType()`
+       - Declares the type of data the operation can process
+     - `std::string_view GetName()`
+       - Provides operation identification
+     - `OperationResult Execute(const OperationResult& input)`
+       - Implements the operation's processing logic
 
 3. **DataType**
-   - Base class for all data types that can flow through the pipeline
-   - Built-in types include:
-     - `URIDataType`: Handles resource locations
-     - `TextDataType`: Plain text data
-     - `JsonDataType`: JSON structured data
-     - `RawImageDataType`: Binary image data
-     - `CompressedDataType`: Compressed binary data
-     - `DecodedImageDataType`: Processed image data
+  - Base class for all data types that can flow through the pipeline
 
 4. **OperationResult**
-   - Wrapper class that handles operation outputs
-   - Contains either successful data or error information
-   - Tracks execution history
-   - Maintains last successful result for error recovery
+  - Wrapper class that handles operation outputs
+  - Contains either successful data or error information
 
 ### Data Flow
 
@@ -103,29 +94,10 @@ The ComputePipeline is built around several key components that work together to
 
 ### Error Handling
 
-The system uses the `OperationError` structure to handle various failure scenarios:
-- `RegistryError`: Operation registration issues
-- `NetworkError`: Remote resource access failures
-- `FileError`: Local file system issues
-- `ReadError`: Data reading problems
-- `ParseError`: Data parsing failures
+The system uses the `OperationError` structure to handle various failure scenarios.
 
 Each error includes:
 - Error type
 - Descriptive message
 - Failed operation name
 - Last successful result (if any)
-
-### Extension Points
-
-The system can be extended by:
-1. Creating new DataType classes
-2. Implementing new Operation classes
-3. Registering operations with the pipeline
-
-This architecture allows for:
-- Type-safe data processing
-- Automatic operation chaining
-- Robust error handling
-- Easy extension with new operations and data types
-- Clear separation of concerns between data types and operations
